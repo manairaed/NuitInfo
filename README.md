@@ -7,6 +7,11 @@ L'objectif principal de ce projet est d'implémenter des mesures de cybersécuri
 ## Défi Accepté !
 Préparez-vous à relever le défi en mettant en œuvre des solutions de cybersécurité efficaces. Plongez dans le monde sombre du code et assurez-vous que votre application est à l'abri des menaces potentielles.
 
+## Branch Gestion-Utilisateur
+
+Pour suivre l'évolution du projet et accéder au reste du travail réalisé, veuillez basculer vers la branche `Gestion-Utilisateur`. Cette branche contient les fonctionnalités liées à la gestion des utilisateurs, y compris les mesures de cybersécurité implémentées.
+
+
 ## Conseils
 - Implémentez des mots de passe robustes.
 - Mettez en place des protections contre les injections.
