@@ -21,7 +21,16 @@ public class UserRestController {
 
     @RequestMapping(path = "all",method = RequestMethod.GET)
     public List<User> getAllUsers() {
-        return userRep.findAll();
+        // Print statement for demonstration purposes
+        System.out.println("Fetching all users...");
+
+        List<User> users = userRep.findAll();
+
+        // Print the number of users retrieved
+        System.out.println("Number of users: " + users.size());
+
+        return users;
+
     }
 
 
@@ -30,6 +39,8 @@ public class UserRestController {
         return userService.registerUser(request);
 
     }
+
+
 
 
 

@@ -80,6 +80,11 @@ public class UserServiceImpl  implements UserService{
         return userRep.save(newUser);
     }
 
+    @Override
+    public List<User> getAllUsers() {
+        return userRep.findAll();
+    }
+
     private String generateCode() {
         Random random = new Random();
         Integer code = 100000 + random.nextInt(900000);

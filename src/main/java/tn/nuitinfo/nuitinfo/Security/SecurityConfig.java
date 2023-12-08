@@ -67,7 +67,7 @@ public class SecurityConfig {
 
 
                 .authorizeHttpRequests()
-                .requestMatchers("/login","/register/**").permitAll()
+                .requestMatchers("/login","/all","/register/**").permitAll()
                 .anyRequest().authenticated().and()
                 .addFilterBefore(new JWTAuthenticationFilter (authMgr),UsernamePasswordAuthenticationFilter.class);
         return http.build();
