@@ -9,7 +9,12 @@ import tn.nuitinfo.nuitinfo.Models.User;
 import tn.nuitinfo.nuitinfo.Repositories.RoleRepository;
 import tn.nuitinfo.nuitinfo.Repositories.UserRepository;
 import tn.nuitinfo.nuitinfo.Services.Registration.RegistrationRequest;
+import tn.nuitinfo.nuitinfo.Services.Registration.VerificationToken;
+import tn.nuitinfo.nuitinfo.Services.Registration.VerificationTokenRepository;
 import tn.nuitinfo.nuitinfo.Services.exceptions.EmailAlreadyExistsException;
+import tn.nuitinfo.nuitinfo.Services.exceptions.ExpiredTokenException;
+import tn.nuitinfo.nuitinfo.Services.exceptions.InvalidTokenException;
+import tn.nuitinfo.nuitinfo.util.EmailSender;
 
 import java.util.*;
 
@@ -27,6 +32,11 @@ public class UserServiceImpl  implements UserService{
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    VerificationTokenRepository verificationTokenRepo;
+
+    @Autowired
+    EmailSender emailSender;
 
     @Override
     public User saveUser(User user) {
@@ -58,7 +68,7 @@ public class UserServiceImpl  implements UserService{
     @Override
     public User registerUser(RegistrationRequest request) {
 
-        Optional<User> optionalUser = userRep.findByEmail(request.getEmail());
+        Optional<User>  optionalUser = userRep.findByEmail(request.getEmail());
         if(optionalUser.isPresent())
             throw new EmailAlreadyExistsException("Email déjà existant!");
 
@@ -76,13 +86,17 @@ public class UserServiceImpl  implements UserService{
         roles.add(r);
         newUser.setRoles(roles);
 
+        //génére le code secret
+        String code = this.generateCode();
+
+        VerificationToken token = new VerificationToken(code, newUser);
+        verificationTokenRepo.save(token);
+
+        //envoyer le code par email à l'utilisateur
+        sendEmailUser(newUser,token.getToken());
+
 
         return userRep.save(newUser);
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        return userRep.findAll();
     }
 
     private String generateCode() {
@@ -93,5 +107,34 @@ public class UserServiceImpl  implements UserService{
 
     }
 
-}
+    @Override
+    public void sendEmailUser(User u, String code) {
+        String emailBody ="Bonjour "+ "<h1>"+u.getUsername() +"</h1>" +
+                " Votre code de validation est "+"<h1>"+code+"</h1>";
 
+        emailSender.sendEmail(u.getEmail(), emailBody);
+    }
+
+    @Override
+    public User validateToken(String code) {
+        VerificationToken token = verificationTokenRepo.findByToken(code);
+
+        if(token == null){
+            throw new InvalidTokenException("Invalid Token !!!!!!!");
+        }
+
+        User user = token.getUser();
+
+        Calendar calendar = Calendar.getInstance();
+
+        if ((token.getExpirationTime().getTime() - calendar.getTime().getTime()) <= 0){
+            verificationTokenRepo.delete(token);
+            throw new ExpiredTokenException("expired Token");
+        }
+
+        user.setEnabled(true);
+        userRep.save(user);
+        return user;
+    }
+
+}

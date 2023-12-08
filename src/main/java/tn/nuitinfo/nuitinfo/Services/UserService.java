@@ -4,8 +4,6 @@ import tn.nuitinfo.nuitinfo.Models.Role;
 import tn.nuitinfo.nuitinfo.Models.User;
 import tn.nuitinfo.nuitinfo.Services.Registration.RegistrationRequest;
 
-import java.util.List;
-
 public interface UserService {
     User saveUser(User user);
     User findUserByUsername (String username);
@@ -13,9 +11,9 @@ public interface UserService {
     User addRoleToUser(String username, String rolename);
 
     User registerUser(RegistrationRequest request);
-    List<User> getAllUsers ();
 
+    public void sendEmailUser(User u, String code);
+    public User validateToken(String code);
 
 
 }
-

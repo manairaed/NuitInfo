@@ -21,16 +21,7 @@ public class UserRestController {
 
     @RequestMapping(path = "all",method = RequestMethod.GET)
     public List<User> getAllUsers() {
-        // Print statement for demonstration purposes
-        System.out.println("Fetching all users...");
-
-        List<User> users = userRep.findAll();
-
-        // Print the number of users retrieved
-        System.out.println("Number of users: " + users.size());
-
-        return users;
-
+        return userRep.findAll();
     }
 
 
@@ -41,7 +32,10 @@ public class UserRestController {
     }
 
 
-
+    @GetMapping("/verifyEmail/{token}")
+    public User verifyEmail(@PathVariable("token") String token){
+        return userService.validateToken(token);
+    }
 
 
 }
