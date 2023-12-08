@@ -1,23 +1,40 @@
 package tn.nuitinfo.nuitinfo.Models;
+
+
+import java.util.List;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+
+@Data @NoArgsConstructor @AllArgsConstructor
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@FieldDefaults(level=AccessLevel.PRIVATE)
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long idUser;
-    String username;
-    String password;
-    Boolean enabled;
+    @GeneratedValue (strategy=GenerationType.IDENTITY)
+    private Long idUser;
+
+    @Column(unique=true)
+    private String username;
+    private String password;
+    private Boolean enabled;
+    private String email;
+
+
+    @ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name="user_role",joinColumns = @JoinColumn(name="idUser") ,
+            inverseJoinColumns = @JoinColumn(name="role_id"))
+    private List<Role> roles;
+
+
 }
